@@ -1,0 +1,320 @@
+
+#include <SoftwareSerial.h> //software serial library for serial communication b/w arduino & GSM
+
+SoftwareSerial mySerial(6, 7);//connect Tx pin of GSM to pin 6 of arduino && Rx pin of GSM to pin no 7 of arduino
+
+
+int led = 8;
+String message;
+int viru=0;
+int relay=13;
+
+const int trigPin = 3;
+const int echoPin = 2;
+// defining variables.
+long duration;
+int distance;
+
+const int trigPin2 = 5;
+const int echoPin2 = 4;
+// defining variables
+long duration2;
+int distance2;
+//trig,echo 3,2 =overhead tank
+//trig,echo 5,4 =undergrund tank
+int flag=0;
+
+void setup()
+
+{  Serial.println("welcome");
+
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input     
+  mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+  mySerial.begin(9600);   // Setting the baud rate of GSM Module  
+
+  Serial.begin(9600);    // Setting the baud rate of Serial Monitor (Arduino)
+
+  delay(100);
+
+
+
+
+  mySerial.println("AT+CNMI=2,2,0,0,0"); // AT Command to receive a live SMS
+
+  delay(1000);
+
+  Serial.println("gsm is ready to recieve msg on/off");
+
+  pinMode(led,OUTPUT);
+pinMode(relay,OUTPUT);
+  digitalWrite(led,LOW);
+
+    char remoteNum[20]="+917878928928";  // telephone number to send sms
+
+  Serial.println("waiting for msg");
+  
+}
+
+
+
+
+void loop()
+
+{
+        
+        digitalWrite(relay,1);
+     // char remoteNum[20]="+919712128444";  // telephone number to send sms
+
+
+  if (mySerial.available()>0){
+
+  message = mySerial.readString();
+
+  }
+
+ if(message.indexOf("ON") > -1){
+
+    viru=1;
+
+      Serial.println("LED ON");
+
+     digitalWrite(led,1);
+
+     Serial.println("viru=1");
+     Serial.print("flag=");
+      Serial.println(flag);
+
+     
+
+     }
+
+    else if(message.indexOf("OFF") > -1){
+
+       viru=0;
+
+      Serial.println("LED OFF");
+
+      digitalWrite(led,0);
+
+      Serial.println("viru=0");
+      Serial.print("flag=");
+      Serial.println(flag);
+     }
+
+    
+       
+      else if(message.indexOf("INFO") > -1)
+
+  {  
+    
+
+    if(viru==1)
+
+     {
+
+      mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+     mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     delay(1000);
+
+     mySerial.println("your power is on");// The SMS text you want to send
+     mySerial.println("\n");// The SMS text you want to send
+
+     Serial.println("text is sended by viru 1");
+
+     delay(100);
+
+     
+      delay(1000);
+
+      digitalWrite(trigPin, LOW);
+      delayMicroseconds(2);
+      // Sets the trigPin on HIGH state for 10 micro seconds
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration = pulseIn(echoPin, HIGH);
+      //   Calculating the distance
+      distance= duration*0.034/(2);
+      int b=map(distance,0,26,100,0);
+       //mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+     //mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     //delay(1000);
+      mySerial.print("\n");// The SMS text you want to send
+      mySerial.print("Water level in overheadtank in percentage: ");// The SMS text you want to send
+      mySerial.println(b);
+
+      //Serial.println("text is sended viru=0");
+
+     delay(100);
+
+//     mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+
+      delay(1000);
+      // Prints the distance on the Serial Monitor
+      Serial.print("Water level in percentage in forheadtank: ");
+      Serial.println(b);
+     
+      Serial.println("Water level in first tank is sended to by GSM");
+      delay(200);
+      
+
+
+      //  mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+    // mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     //delay(1000);
+      digitalWrite(trigPin2, LOW);
+      delayMicroseconds(2);
+      // Sets the trigPin on HIGH state for 10 micro seconds
+      digitalWrite(trigPin2, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin2, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration2 = pulseIn(echoPin2, HIGH);
+      //   Calculating the distance
+      distance2= (duration2)*0.034/(2);
+      // Prints the distance on the Serial Monitor
+      Serial.print("Distance in inch in second tank: ");
+      Serial.println(distance2);
+      int c=map(distance2,0,26,100,0);
+     // mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+    // mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     delay(1000);
+     mySerial.print("\n");// The SMS text you want to send
+      mySerial.print("Water level in 2nd tank in is underground tank");// The SMS text you want to send
+       mySerial.println(c);// The SMS text you want to send
+      delay(100);
+      mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+      delay(1000);
+      Serial.println("Water level in second tank is sended to by GSM");
+      delay(200);
+
+     }
+
+
+     if(viru==0)
+
+     {
+
+      mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+     mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     delay(1000);
+
+      mySerial.println("your power is off");// The SMS text you want to send
+
+      Serial.println("text is sended viru=0");
+
+     delay(100);
+
+    // mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+
+      delay(1000);
+
+      digitalWrite(trigPin, LOW);
+      delayMicroseconds(2);
+      // Sets the trigPin on HIGH state for 10 micro seconds
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration = pulseIn(echoPin, HIGH);
+      //   Calculating the distance
+      distance= duration*0.034/(2);
+       //mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+     //mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     //delay(1000);
+      int b=map(distance,1,26,100,1);
+      mySerial.println("\n");
+      mySerial.println("Water level in forhead tank:  ");// The SMS text you want to send
+      mySerial.println(b);
+      mySerial.println(" %");
+      mySerial.println("\n");
+
+      //Serial.println("text is sended viru=0");
+
+     delay(100);
+
+     //mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+
+      delay(1000);
+      // Prints the distance on the Serial Monitor
+      Serial.print("Water level in percentage in forheadtank: ");
+      Serial.println(b);
+     
+      Serial.println("Water level in first tank is sended to by GSM");
+      delay(200);
+      
+
+
+      //  mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+    // mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     //delay(1000);
+      digitalWrite(trigPin2, LOW);
+      delayMicroseconds(2);
+      // Sets the trigPin on HIGH state for 10 micro seconds
+      digitalWrite(trigPin2, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(trigPin2, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration2 = pulseIn(echoPin2, HIGH);
+      //   Calculating the distance
+      distance2= (duration2)*0.034/(2);
+      int c=map(distance2,1,26,100,1);
+      // Prints the distance on the Serial Monitor
+      Serial.print("Distance in inch in second tank: ");
+      Serial.println(c);
+      
+      //mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+
+     delay(1000);  // Delay of 1 second
+
+    // mySerial.println("AT+CMGS=\"+919712128444\"\r"); // Replace x with mobile number
+
+     delay(1000);
+      mySerial.println("Water level in bottom tank:  ");// The SMS text you want to send
+       mySerial.print(c);// The SMS text you want to send
+       mySerial.println(" %");
+      delay(100);
+      mySerial.println((char)26);// ASCII code of CTRL+Z for saying the end of sms to  the module 
+      delay(1000);
+      Serial.println("Water level in second tank is sended to by GSM");
+      delay(200);
+
+     }
+
+ 
+
+ delay(10);
+  
+  }
+
+}
