@@ -1,5 +1,5 @@
 <h1> GSM-BASED-SMART-IRRIGATION-SYSTEM  - KISHAN MITRA </h1>
-
+<meta name='GSM-BASED-SMART-IRRIGATION-SYSTEM ' content='GSM-BASED-SMART-IRRIGATION-SYSTEM , smart irrigation, iot , farming, automation in farming,prototype in agricuiture, gujarat hackthon, india hackathon, solving farmers problems, KISHAN MITRA'>
 **Challenge Description in Smart Gujarat For New India Hackathon 2019-20**
 
 <p align="justify">Irrigation system is critical in the development of agriculture of every country. It has been established that efficient irrigation processes have the potential of literally doubling the
