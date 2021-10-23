@@ -1,4 +1,4 @@
-<h1> GSM-BASED-SMART-IRRIGATION-SYSTEM </h1>
+<h1> GSM-BASED-SMART-IRRIGATION-SYSTEM  - KISHAN MITRA </h1>
 
 **Challenge Description in Smart Gujarat For New India Hackathon 2019-20**
 
@@ -62,6 +62,9 @@ The automation includes distant control of motor operation using GSM.</p>
 <h1> Final Prototype of Project </h1>
 
 ![FArm_1](https://user-images.githubusercontent.com/29841028/138566242-4fe61a6f-159b-4b86-bde0-3ec9deed7f02.jpeg)
+<br>
+
+<h1> KISHAN MITRA </h1>
 
 ![gsmbox1](https://user-images.githubusercontent.com/29841028/138566169-891d47f4-47b1-4d6c-9637-273cb468104c.jpeg)
 <br>
